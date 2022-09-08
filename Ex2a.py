@@ -92,9 +92,12 @@ for n in range(1, 11):
     vfxyarray[n-1] = vfxylist
     Gfxyarray[n-1] = Gfxylist
 
-for q, row in enumerate(Gfxyarray):
+for q, row in enumerate(vfxyarray):
     plt.plot(theta_array, row, label=f"n={q+1}")
 
+plt.xlabel("theta (deg)")
+plt.ylabel("vfxy (-)")
+plt.xlim(-89, 90)
 plt.grid()
 plt.legend()
 plt.show()
