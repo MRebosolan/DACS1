@@ -32,4 +32,3 @@ l_Q = np.array(dfQ["L Left"] + dfQ["L Right"])/2
 w_Q = np.array(dfQ["W Top"] + dfQ["W Mid"] + dfQ["W Bottom"])/3
 t_Q = np.array(dfQ["T Top-left"] + dfQ["T Top-right"] + dfQ["T Mid-left"] + dfQ["T Mid-right"] + dfQ["T Bottom-left"] + dfQ["T Bottom-right"])/6
 
-print(w_Q)

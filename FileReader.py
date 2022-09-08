@@ -3,6 +3,7 @@ import numpy as np
 from pathlib import Path
 import matplotlib.pyplot as plt
 import os
+from scipy.stats import norm
 
 
 #APPROACH TO OBTAIN E1
@@ -31,13 +32,21 @@ for i, df in enumerate(dfMTSUD):
     df["sigmaxx"] = df["Load [N]"]/(a[i])
     exx = np.array(df["exx"])
     sigmaxx = np.array(df["sigmaxx"])
-    plt.xlim((0, 0.014))
-    plt.ylim(-100, 1.5E9)
-    plt.plot(exx, sigmaxx)
-    E1 = sigmaxx[10000]/exx[10000]
-    print(E1)
-    plt.show()
 
-print(E1values)
+    #plt.plot(exx, sigmaxx)
+    E1 = sigmaxx[1000:5000]/exx[1000:5000]
+    for value in E1:
+        E1values.append(value)
 
 
+
+print(min(E1values), max(E1values))
+mu, std = norm.fit(E1values)
+x = np.linspace(min(E1values), max(E1values), 100000)
+p = norm.pdf(x, mu, std)
+plt.plot(x, p)
+
+
+
+
+plt.show()
