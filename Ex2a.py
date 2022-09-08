@@ -14,20 +14,30 @@ Xc = 1200
 Yt = 48
 Yc = 35
 
-Exarray = np.zeros(10)    #EACH ROW IS A COLUMN FOR A SPECIFIC THETA, n ROWS
-Eyarray = np.zeros(10)
-vxyarray = np.zeros(10)
-Gxy = np.zeros(10)
-Efxarray = np.zeros(10)
-Efyarray = np.zeros(10)
-vfxyarray = np.zeros(10)
-Gfxy = np.zeros(10)
+Exarray = np.zeros((10, 181))
+Eyarray = np.zeros((10, 181))
+vxyarray = np.zeros((10, 181))
+Gxyarray = np.zeros((10, 181))
+Efxarray = np.zeros((10, 181))
+Efyarray = np.zeros((10, 181))
+vfxyarray = np.zeros((10, 181))
+Gfxyarray = np.zeros((10, 181))
+
+theta_array = np.linspace(-90, 90, 181)
 
 
 for n in range(1, 11):
 
-    theta_array = np.linspace(-90, 90, 181)
 
+
+    Exlist = []  # ARRAYS FOR ONE VALUE OF N
+    Eylist = []
+    vxylist = []
+    Gxylist = []
+    Efxlist = []
+    Efylist = []
+    vfxylist = []
+    Gfxylist = []
 
 
     for theta in theta_array:
@@ -41,14 +51,7 @@ for n in range(1, 11):
             angles.append(60)
 
 
-        Exlist = []  #ARRAYS FOR ONE VALUE OF N
-        Eylist = []
-        vxylist = []
-        Gxylist = []
-        Efxlist = []
-        Efylist = []
-        vfxylist = []
-        Gfxylist = []
+
         t = 0.125
         zlocations = np.arange(-t*len(angles)/2, t*(len(angles)+1)/2, t)
 
@@ -69,15 +72,39 @@ for n in range(1, 11):
         vfxylist.append(vfxy)
         Gfxylist.append(Gfxy)
 
-        Exlist = np.array(Exlist)
-        Eylist = np.array(Eylist)
-        vxylist = np.array(vxylist)
-        Gxylist = np.array(Gxylist)
-        Efxlist = np.array(Efxlist)
-        Efylsit = np.array(Efylist)
-        vfxylist = np.array(vfxylist)
-        Gfxylist = np.array(Gfxylist)
-        print(n)
+
+
+    Exlist = np.array(Exlist)
+    Eylist = np.array(Eylist)
+    vxylist = np.array(vxylist)
+    Gxylist = np.array(Gxylist)
+    Efxlist = np.array(Efxlist)
+    Efylist = np.array(Efylist)
+    vfxylist = np.array(vfxylist)
+    Gfxylist = np.array(Gfxylist)
+
+    Exarray[n-1] = Exlist
+    Eyarray[n-1] = Eylist
+    vxyarray[n-1] = vxylist
+    Gxyarray[n-1] = Gxylist
+    Efxarray[n-1] = Efxlist
+    Efyarray[n-1] = Efylist
+    vfxyarray[n-1] = vfxylist
+    Gfxyarray[n-1] = Gfxylist
+
+for q, row in enumerate(Gfxyarray):
+    plt.plot(theta_array, row, label=f"n={q+1}")
+
+plt.grid()
+plt.legend()
+plt.show()
+
+
+
+
+
+
+
 
 
 

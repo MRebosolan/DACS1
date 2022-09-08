@@ -37,6 +37,7 @@ for i in range(len(angles)):
 laminate1 = laminate(laminaarray)
 loads = [0.2E2, 5, 0, 0, 9, 0]
 globalstrain = laminate1.globalstrains(loads)
+print(globalstrain)
 
 strainarray = []
 sigmaarray = []
