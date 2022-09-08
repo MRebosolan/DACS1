@@ -1,0 +1,1 @@
+def globalQmatrix(E1, E2, v12)
