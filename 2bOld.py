@@ -19,12 +19,12 @@ laminaarray = []
 angles = []
 
 
-angles.append(30)
+
+angles.append(0)
 angles.append(45)
 angles.append(-45)
-angles.append(60)
-angles.append(60)
-
+angles.append(90)
+angles.append(90)
 
 t = 0.125
 zlocations = np.arange(-t*len(angles)/2, t*(len(angles)+1)/2, t)
@@ -36,12 +36,10 @@ for i in range(len(angles)):
     laminaarray.append(ply)
 
 laminate1 = laminate(laminaarray)
-ABD = laminate1.createABD()
-ABDI = np.linalg.inv(ABD)
-
-loads = [20, 5, 0, 0, 9, 0]
+loads = [2.2E2, 0.8, 0, 2.3, 0, 0]
 globalstrain = laminate1.globalstrains(loads)
-
+print(np.linalg.inv(laminate1.createABD()))
+print(globalstrain)
 
 strainarray = []
 sigmaarray = []
@@ -49,7 +47,6 @@ globalstrainarray = []
 
 for ply in laminaarray:
     plystrainG = ply.plystrains(globalstrain, 10)
-
     for point in range(10):
         plystrainGatpoint = plystrainG[:, point]
         plystressGatpoint = ply.calculatestresses(plystrainGatpoint)

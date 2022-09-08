@@ -120,37 +120,12 @@ class lamina:
             d = 0
         return d
 
-    def hashinMC(self, Yc, S12, sigma2, tau12): #TRANSVERSE SHEAR STRENGTH ASSUMED EQUAL TO LONGITUDINAL SHEAR STRENGTH
+    def hashinMC(self, Yc, S12, S23, sigma2, tau12): #OUT OF PLANE SHEAR STRENGTH ASSUMED EQUAL TO IN PLANE SHEAR STRENGTH
         if sigma2 < 0:
-            d = (sigma2/Yc)*((Yc/(2*S12))**2 - 1) + (sigma2/(2*S12))**2 + (tau12/S12)**2
+            d = (sigma2/Yc)*((Yc/(2*S23))**2 - 1) + (sigma2/(2*S23))**2 + (tau12/S12)**2
         else:
             d = 0
         return d
-
-    def hashindamage(self, principalstresses):
-        Xt, Xc, Yt, Yc, S12 = self.Xt, self.Xc, self.Yt, self.Yc, self.S12
-        sigma11, sigma22, sigma12 = principalstresses[0], principalstresses[1], principalstresses[2] #ARRAY OF STRESSES AT INTEGRATION POINTS
-        dFTpoints = []
-        dFCpoints = []
-        dMTpoints = []
-        dMCpoints = []       #LISTS OF DAMAGE BY TYPE AT EACH INTEGRATION POINT
-
-        for point in range(len(sigma11)):
-
-            dFTpoint = self.hashinFT(Xt, S12, sigma11[point], sigma12[point])
-            dFCpoint = self.hashinFC(Xc, sigma11[point])
-            dMTpoint = self.hashinMT(Yt, S12, sigma22[point], sigma12[point])
-            dMCpoint = self.hashinMC(Yc, S12, sigma22[point], sigma12[point])
-            dFTpoints.append(dFTpoint)
-            dFCpoints.append(dFCpoint)
-            dMTpoints.append(dMTpoint)
-            dMCpoints.append(dMCpoint)
-
-        maxdamages = max(dFTpoints), max(dFCpoints), max(dMTpoints), max(dMCpoints)
-        d = max(maxdamages)
-        dtype = int(maxdamages.index(d) + 1)
-        return d, dtype
-
 
 
 
@@ -173,7 +148,8 @@ class lamina:
         sigma23a = (S12/(2*p12))*(sqrt(1+2*p12*(Yc/S12)) - 1)
         sigma12c = S12*sqrt(1+2*p23)
         if 0 <= abs(sigma22 / sigma12) <= sigma23a/abs(sigma12c) and sigma22 < 0:
-            d = 1/S12 * ((sqrt(sigma12**2 + (p12*sigma22)**2)) + p12*sigma22)  #p12 = 0.2
+            #d = 1/S12 * ((sqrt(sigma12**2 + (p12*sigma22)**2)) + p12*sigma22)  #p12 = 0.2
+            d = sqrt((sigma12/S12)**2 + ((p12/S12)*sigma22)**2) + (p12/S12)*sigma22
         else:
             d = 0
         return d
@@ -188,31 +164,6 @@ class lamina:
             d = 0
         return d
 
-    def puckdamage(self, principalstresses, E1f, v12f):
-
-        Xt, Xc, Yt, Yc, S12, E1, v12 = self.Xt, self.Xc, self.Yt, self.Yc, self.S12, self.E1, self.v12
-        sigma11, sigma22, sigma12 = principalstresses[0], principalstresses[1], principalstresses[2]
-
-        dFFpoints = []
-        dIFFApoints = []
-        dIFFBpoints = []
-        dIFFCpoints = []
-
-        for point in range(len(sigma11)):
-            dFFpoint = self.puckFF(Xt, Xc, E1, E1f, v12, v12f, sigma11[point], sigma22[point])
-            dIFFApoint = self.puckIFFA(sigma12[point], sigma22[point], S12, Yt)
-            dIFFBpoint = self.puckIFFB(sigma12[point], sigma22[point], S12, Yc)
-            dIFFCpoint = self.puckIFFC(sigma12[point], sigma22[point], Yc, S12)
-            dFFpoints.append(dFFpoint)
-            dIFFApoints.append(dIFFApoint)
-            dIFFBpoints.append(dIFFBpoint)
-            dIFFCpoints.append(dIFFCpoint)
-
-        maxdamages = max(dFFpoints), max(dIFFApoints), max(dIFFBpoints)#, max(dIFFCpoints)
-        d = max(maxdamages)
-        dtype = int(maxdamages.index(d) + 1)
-        return d, dtype
-
 
 
 class laminate:
@@ -222,9 +173,6 @@ class laminate:
         self.nplies = len(laminaarray)
         self.h = laminaarray[-1].z2 - laminaarray[0].z1
 
-    def appliedstresses(self, loads):
-        stresses = loads/self.h
-        return stresses
 
 
     def createABD(self):
@@ -267,33 +215,6 @@ class laminate:
 
 
 
-
-    def HookeMatrix(self):
-        Ex, Ey, vxy, vyx, Gxy = self.equivalentelastic()
-        hm = np.array([[1/Ex, -vyx/Ey, 0], [-vxy/Ex, 1/Ey, 0], [0, 0, 1/Gxy]])
-        return hm
-
-    def globalstrains2(self, stresses):
-        hm = self.HookeMatrix()
-        strains = hm @ stresses
-        return strains
-
-    def calculatedamage(self, laminatestrains, n):    #n = number of points through thickness at which strains are calculated
-        plystressesL = []
-        damageh = []
-        damagep = []
-        for ply in self.laminaarray:
-            plystrainG = ply.plystrains(laminatestrains, n)
-            plystressG = ply.calculatestresses(plystrainG)
-            plystressL = ply.principalstresses(plystressG)
-            plystressesL.append(plystressL)
-            plydamageh, damagetypeh = ply.hashindamage(plystressL)
-            plydamagep, damagetypep = ply.puckdamage(plystressL, 250E9, 0.1)
-            damageh.append(plydamageh)
-            damagep.append(plydamagep)
-
-
-        return np.array(damageh)    #TO GET STRAINS FOR A SPECIFIC PLY n: plystrainsG[n, :, :]
 
 
 

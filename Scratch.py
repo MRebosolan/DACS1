@@ -22,12 +22,14 @@ E2 = 7.72E3
 v12 = 0.28
 G12 = 4.685E3
 S12 = 79
+S23 = 20
 Xt = 1950
-Xc = 1200
-Yt = 48
-Yc = 35
+Xc = 1480
+Yt = 130
+Yc = 220
 
 t = 0.125
+
 
 zlocations = np.arange(-t * len(angles) / 2, t * (len(angles) + 1) / 2, t)
 
@@ -39,13 +41,17 @@ for n in range(len(angles)):
 
 laminate1 = laminate(laminaarray)
 
-Nxrange = np.arange(-1000, 1000, 25)
-Nyrange = np.arange(0, -1000, -25)
+Nxrange = np.arange(-2000, 2000, 25)
+Nyrange = np.arange(0, -2000, -25)
+Nyrange2 = np.arange(0, 2000, 25)
 
 envelopepoints = []
+envelopepoints2 = []
 loadcombinations = {}  # KEYS = ENVELOPE COORDINATES, VALUES = FAILED TRUE/FALSE
+loadcombinations2 = {}
 
-# PLYSTRAINS --> CALCULATESTRESSES --> PRINCIPLASTRESSES2
+
+# PLYSTRAINS --> CALCULATESTRESSES --> PRINCIPALSTRESSES2
 
 for Nx in Nxrange:
     for ply in laminaarray:
@@ -59,7 +65,7 @@ for Nx in Nxrange:
             plystressesG = ply.calculatestresses(plystrainsG)
             plystressesL = ply.principalstresses2(plystressesG)
             sigma11, sigma22, sigma12 = plystressesL
-            print(plystressesL)
+
 
             # dFF = ply.puckFF(Xt, Xc, E1, 200E3, v12, 0.1, sigma11, sigma22, sigma12)
             # dIFFA = ply.puckIFFA(sigma12, sigma22, S12, Yt)
@@ -70,10 +76,10 @@ for Nx in Nxrange:
             d1 = ply.hashinFT(Xt, S12, sigma11, sigma12)
             d2 = ply.hashinFC(Xc, sigma11)
             d3 = ply.hashinMT(Yt, S12, sigma22, sigma12)
-            d4 = ply.hashinMC(Yc, S12, sigma22, sigma12)
+            d4 = ply.hashinMC(Yc, S12, S23, sigma22, sigma12)
             dlist = [d1, d2, d3, d4]
             d = max(dlist)
-            print(d, Nx, Ny)
+
             if d >= 1:
                 loadcombinations.update({(Nx, Ny): True})
                 ply.failed = True
@@ -84,15 +90,56 @@ for key in loadcombinations.keys():
     if loadcombinations[key] is True:
         envelopepoints.append(np.array(key))
 
-envelopepoints = np.array(envelopepoints)
 
-plt.plot(envelopepoints[:, 0], envelopepoints[:, 1])
+for Nx in Nxrange:
+    for ply in laminaarray:
+        ply.failed = False
+    for Ny in Nyrange2:
+        globalstrain = laminate1.globalstrains([Nx, Ny, 0, 0, 0, 0])
+        loadcombinations2.update({(Nx, Ny): False})
+
+        for ply in laminaarray:
+            plystrainsG = ply.plystrains(globalstrain, 1)
+            plystressesG = ply.calculatestresses(plystrainsG)
+            plystressesL = ply.principalstresses2(plystressesG)
+            sigma11, sigma22, sigma12 = plystressesL
+
+
+            # dFF = ply.puckFF(Xt, Xc, E1, 200E3, v12, 0.1, sigma11, sigma22, sigma12)
+            # dIFFA = ply.puckIFFA(sigma12, sigma22, S12, Yt)
+            # dIFFB = ply.puckIFFB(sigma12, sigma22, S12, Yc)
+            # dIFFC = ply.puckIFFC(sigma12, sigma22, Yc, S12)
+            # dlist = [dFF, dIFFA, dIFFB, dIFFC]
+
+            d1 = ply.hashinFT(Xt, S12, sigma11, sigma12)
+            d2 = ply.hashinFC(Xc, sigma11)
+            d3 = ply.hashinMT(Yt, S12, sigma22, sigma12)
+            d4 = ply.hashinMC(Yc, S12, S23, sigma22, sigma12)
+            dlist = [d1, d2, d3, d4]
+            print(dlist)
+            d = max(dlist)
+
+            if d >= 1:
+                loadcombinations2.update({(Nx, Ny): True})
+                ply.failed = True
+        if any(ply.failed is True for ply in laminaarray):
+            break
+
+for key in loadcombinations2.keys():
+    if loadcombinations2[key] is True:
+        envelopepoints2.append(np.array(key))
+
+envelopepoints = np.array(envelopepoints)
+envelopepoints2 = np.array(envelopepoints2)
+
+plt.plot(envelopepoints[:, 0], envelopepoints[:, 1], "b")
+plt.plot(envelopepoints2[:, 0], envelopepoints2[:, 1], "b")
 plt.ylabel("Ny (N/mm)")
 plt.xlabel("Nx (N/mm)")
-plt.xlim(-1000, 1000)
-plt.ylim(-1000, 1000)
+plt.xlim(-2000, 2000)
+plt.ylim(-2000, 2000)
 plt.grid()
 plt.show()
 
-print(envelopepoints)
+
 
