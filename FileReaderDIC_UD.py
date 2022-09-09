@@ -13,6 +13,7 @@ w = np.delete(w_UD, [6, 10])
 t = np.delete(t_UD, [6, 10])
 E1values = []
 v12values = []
+G12values = []
 a = w * t
 
 
@@ -31,18 +32,21 @@ for n, df in enumerate(dfDICUD):
     eyy = np.array(df["eyy [1] - engr."])
 
     sigmaxx = np.array(df["Force"]/(a[n]))
+    G12 = np.array(sigmaxx[30:50]/(2*(exx[30:50] - eyy[30:50])))
     E1 = sigmaxx[30:50]/exx[30:50]
     v12 = -eyy[30:50]/exx[30:50]
     for value in v12:
         v12values.append(value)
     for value2 in E1:
         E1values.append(value2)
+    for value3 in G12:
+        G12values.append(G12)
 
 
 mu, std = norm.fit(v12values)
 mu2, std2 = norm.fit(E1values)
-print(mu)
-print(mu2)
+mu3, std3 = norm.fit(G12values)
+print(mu3)
 
 
 
