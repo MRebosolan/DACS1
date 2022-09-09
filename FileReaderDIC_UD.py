@@ -46,7 +46,7 @@ for n, df in enumerate(dfDICUD):
 mu, std = norm.fit(v12values)
 mu2, std2 = norm.fit(E1values)
 mu3, std3 = norm.fit(G12values)
-print(mu3)
+print(mu2)
 
 
 
