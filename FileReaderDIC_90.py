@@ -27,7 +27,7 @@ for n, df in enumerate(dfDIC90):
     eyy = np.array(df["eyy [1] - engr."])
     sigmaxx = np.array(df["Force"]/a[n])
     E2 = sigmaxx[20:50]/exx[20:50]
-    G12 = np.array(sigmaxx[30:50] / (2 * exx[30:50] * eyy[30:50]))
+    G12 = np.array(sigmaxx[30:50] / (2 * exx[30:50] - eyy[30:50]))
     v21 = - eyy[20:50]/exx[20:50]
     for value in v21:
         v21values.append(abs(value))
@@ -39,6 +39,6 @@ for n, df in enumerate(dfDIC90):
 mu, std = norm.fit(v21values)
 mu2, std2 = norm.fit(G12values)
 mu3, std3 = norm.fit(E2values)
-print(mu3)
+print(mu2)
 
 
