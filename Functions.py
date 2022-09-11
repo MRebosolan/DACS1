@@ -4,12 +4,10 @@ from math import *
 
 
 class lamina:
-    def __init__(self, E1, E2, v12, G12, theta, z1, z2, Xt, Xc, Yt, Yc, S12, failed=False):
+    def __init__(self, E1, E2, v12, G12, theta, z1, z2, Xt, Xc, Yt, Yc, S12, failed=False, dtype=4):
         self.failed = failed
-        if self.failed is False:
-            self.E1 = E1
-        else:
-            self.E1 = E1*0.5
+        self.dtype = dtype
+        self.E1 = E1
         self.E2 = E2
         self.v12 = v12
         self.v21 = v12 * (E2/E1)
