@@ -4,7 +4,7 @@ from math import *
 
 
 class lamina:
-    def __init__(self, E1, E2, v12, G12, theta, z1, z2, Xt, Xc, Yt, Yc, S12, failed=False, dtype=4):
+    def __init__(self, E1, E2, v12, G12, theta, z1, z2, Xt, Xc, Yt, Yc, S12, failed=False, dtype=4, FF=False, MF=False):
         self.failed = failed
         self.dtype = dtype
         self.E1 = E1
@@ -20,6 +20,8 @@ class lamina:
         self.Yt = Yt
         self.Yc = Yc
         self.S12 = S12
+        self.FF = FF
+        self.MF = MF
 
 
     def Qmatrix(self):
