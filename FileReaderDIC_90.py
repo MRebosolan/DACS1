@@ -39,6 +39,6 @@ for n, df in enumerate(dfDIC90):
 mu, std = norm.fit(v21values)
 mu2, std2 = norm.fit(G12values)
 mu3, std3 = norm.fit(E2values)
-print(mu2)
+print(mu, std)
 
 

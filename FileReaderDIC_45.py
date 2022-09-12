@@ -30,4 +30,4 @@ for n, df in enumerate(dfDIC45):
         G12values.append(value)
 
 mu, std = norm.fit(G12values)
-print(mu)
+print(mu, std)

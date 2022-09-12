@@ -36,7 +36,7 @@ for n, df in enumerate(dfMTS90):
 
 mu, std = norm.fit(E2values)
 mu2, std2 = norm.fit(Ytvalues)
-print(mu, mu2)
+print(mu2, std2)
 
 plt.show()
 

@@ -5,14 +5,14 @@ import matplotlib.pyplot as plt
 
 
 E1 = 140.03E3
-E2 = 7.72E3
-v12 = 0.3
-G12 = 4.685E3
-S12 = 79
-Xt = 1950
-Xc = 1200
-Yt = 48
-Yc = 35
+E2 = 8.036E3
+v12 = 0.355
+G12 = 4.363E3
+S12 = 98.92
+Xt = 1926.1
+Xc = 1480
+Yt = 107.06
+Yc = 220
 
 Exarray = np.zeros((10, 181))
 Eyarray = np.zeros((10, 181))
@@ -52,7 +52,7 @@ for n in range(1, 11):
 
 
 
-        t = 0.125
+        t = 2/len(angles)
         zlocations = np.arange(-t*len(angles)/2, t*(len(angles)+1)/2, t)
 
         laminaarray = []
@@ -71,7 +71,6 @@ for n in range(1, 11):
         Efylist.append(Efy)
         vfxylist.append(vfxy)
         Gfxylist.append(Gfxy)
-
 
 
     Exlist = np.array(Exlist)
@@ -101,14 +100,5 @@ plt.xlim(-89, 90)
 plt.grid()
 plt.legend()
 plt.show()
-
-
-
-
-
-
-
-
-
 
 

@@ -5,14 +5,14 @@ import matplotlib.pyplot as plt
 
 
 E1 = 140.03E3
-E2 = 7.72E3
-v12 = 0.3
-G12 = 4.685E3
-S12 = 79
-Xt = 1950
-Xc = 1200
-Yt = 48
-Yc = 35
+E2 = 8.036E3
+v12 = 0.355
+G12 = 4.363E3
+S12 = 98.92
+Xt = 1926.1
+Xc = 1480
+Yt = 107.06
+Yc = 220
 
 
 laminaarray = []
@@ -26,7 +26,7 @@ angles.append(60)
 angles.append(60)
 
 
-t = 0.125
+t = 2/len(angles)
 zlocations = np.arange(-t*len(angles)/2, t*(len(angles)+1)/2, t)
 
 
@@ -75,7 +75,7 @@ plt.plot(strainarray[:, 2], np.linspace(zlocations[0], zlocations[-1], len(sigma
 
 
 plt.grid()
-plt.xlabel("stress (MPa)")
+plt.xlabel("strain (-)")
 plt.ylabel("z (mm)")
 plt.legend()
 plt.show()

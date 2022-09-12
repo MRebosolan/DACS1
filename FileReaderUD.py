@@ -2,8 +2,11 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import os
-from scipy.stats import norm
+from scipy.stats import norm, exponweib
 from SampleDimensions import l_UD, w_UD, t_UD
+from reliability.Fitters import Fit_Weibull_2P, Fit_Weibull_3P
+from reliability.Probability_plotting import plot_points
+from reliability.Distributions import Weibull_Distribution
 
 
 #APPROACH TO OBTAIN E1
@@ -18,9 +21,9 @@ from SampleDimensions import l_UD, w_UD, t_UD
 # l = np.array([250.17,250.16,250.15,250.14,250.15,250.16,250.15,250.13,250.11,250.16,250.17])
 # a = np.array([2,2,2,2,2,2,2,2,2,2,2]) * 0.00001
 
-l = np.delete(l_UD, [6, 10])
-w = np.delete(w_UD, [6, 10])
-t = np.delete(t_UD, [6, 10])
+l = np.delete(l_UD, [6, 9])
+w = np.delete(w_UD, [6, 9])
+t = np.delete(t_UD, [6, 9])
 a = w * t
 
 
@@ -41,7 +44,7 @@ for i, df in enumerate(dfMTSUD):
     exx = np.array(df["exx"])
     sigmaxx = np.array(df["sigmaxx"])
 
-    plt.plot(exx, sigmaxx, label=f"{i+1}")
+    #plt.plot(exx, sigmaxx, label=f"{i+1}")
 
     Xt = max(sigmaxx)
     Xtvalues.append(Xt)
@@ -51,17 +54,29 @@ for i, df in enumerate(dfMTSUD):
 
 
 
-mu, std = norm.fit(E1values)
-mu2, std2 = norm.fit(Xtvalues)
+# mu, std = norm.fit(E1values)
+# mu2, std2 = norm.fit(Xtvalues)
 x = np.linspace(min(E1values), max(E1values), 100000)
-x2 = np.linspace(min(Xtvalues), max(Xtvalues), 100000)
-p = norm.pdf(x, mu, std)
-p2 = norm.pdf(x2, mu2, std2)
+# x2 = np.linspace(min(Xtvalues), max(Xtvalues), 100000)
+# p = norm.pdf(x, mu, std)
+# p2 = norm.pdf(x2, mu2, std2)
+# plt.legend()
+# #plt.plot(x, p)
+# #plt.plot(x2, p2)
+# plt.show()
+# print(mu2, std2)
+
+# exp1, k1, loc1, lam1 = exponweib.fit(E1values, f0=1)
+# weibullpdf = exponweib.pdf(x, exp1, k1, loc1, lam1)
+# print(exp1, k1, loc1, lam1)
+
+
+data = Xtvalues
+weibull_fit = Fit_Weibull_3P(failures=data,show_probability_plot=False,print_results=False)
+weibull_fit.distribution.PDF(label='Fitted Distribution',color='steelblue')
+#plot_points(failures=data,func='PDF',label='failure data',color='red',alpha=0.7)
 plt.legend()
-#plt.plot(x, p)
-#plt.plot(x2, p2)
 plt.show()
-print(mu, mu2)
 
 
 
