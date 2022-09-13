@@ -29,5 +29,5 @@ print(UTSlist*t)
 
 
 
-mu, std = norm.fit(UTSlist)
+mu, std = norm.fit(UTSlist*t)
 print(mu)

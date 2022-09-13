@@ -43,6 +43,7 @@ S12insitu = sqrt((sqrt(1 + beta*phi*G12**2)-1)/(3*beta*G12))
 S12insitu2 = sqrt((sqrt(1 + beta*phi2*G12**2)-1)/(3*beta*G12))
 Ytinsitu = sqrt((8*G1c)/(pi*t*delta))
 Ytinsitu2 = 1.79*sqrt(G1c/(pi*t*delta))
+print(Ytinsitu, Ytinsitu2)
 
 
 zlocations = np.arange(-t * len(angles) / 2, t * (len(angles) + 1) / 2, t)
@@ -59,9 +60,9 @@ for n in range(len(angles)):
 
 laminate1 = laminate(laminaarray)
 
-Nxrange = np.arange(-2000, 2000, 50)
-Nyrange = np.arange(0, -2000, -50)
-Nyrange2 = np.arange(0, 2000, 50)
+Nxrange = np.arange(-2000, 2000, 25)
+Nyrange = np.arange(0, -2000, -25)
+Nyrange2 = np.arange(0, 2000, 25)
 
 envelopepoints = []
 envelopepoints2 = []
@@ -71,6 +72,7 @@ LPFcoordinates = {}
 LPFenvelope = []
 LPFcoordinates2 = {}
 LPFenvelope2 = []
+LPFstrains = []
 
 for Nx in Nxrange:
     for Ny2 in Nyrange2:
@@ -136,7 +138,7 @@ for Nx in Nxrange:
                     ply.S12 = S12insitu
                     ply.G12 = G12
 
-        globalstrain = laminate1.globalstrains([Nx, Ny, 0, 0, 0, 0])
+        globalstrain = laminate1.globalstrains([0, Nx, Ny, 0, 0, 0])
 
         for ply in laminaarray:
             plystrainsG = ply.plystrains(globalstrain, 1)
@@ -175,6 +177,7 @@ for Nx in Nxrange:
 
         if all(ply.failed is True for ply in laminaarray):
             LPFcoordinates.update({(Nx, Ny): True})
+            LPFstrains.append([Nx, Ny, *globalstrain[:3]])
             break
 
 for key in loadcombinations.keys():
@@ -240,7 +243,7 @@ for Nx in Nxrange:
                     ply.S12 = S12insitu
                     ply.G12 = G12
 
-        globalstrain = laminate1.globalstrains([Nx, Ny, 0, 0, 0, 0])
+        globalstrain = laminate1.globalstrains([0, Nx, Ny, 0, 0, 0])
 
         for ply in laminaarray:
             plystrainsG = ply.plystrains(globalstrain, 1)
@@ -279,6 +282,7 @@ for Nx in Nxrange:
 
         if all(ply.failed is True for ply in laminaarray):
             LPFcoordinates2.update({(Nx, Ny): True})
+            LPFstrains.append([Nx, Ny, *globalstrain[:3]])
             break
 
 for key in loadcombinations2.keys():
@@ -293,14 +297,17 @@ envelopepoints = np.array(envelopepoints)
 envelopepoints2 = np.array(envelopepoints2)
 LPFenvelope = np.array(LPFenvelope)
 LPFenvelope2 = np.array(LPFenvelope2)
+LPFstrains = np.array(LPFstrains)
+print(LPFstrains)
 
 plt.plot(envelopepoints[:, 0], envelopepoints[:, 1], "b")
 plt.plot(LPFenvelope[:, 0], LPFenvelope[:, 1], "r")
 plt.plot(envelopepoints2[:, 0], envelopepoints2[:, 1], "b")
 plt.plot(LPFenvelope2[:, 0], LPFenvelope2[:, 1], "r")
-plt.ylabel("Ny (N/mm)")
-plt.xlabel("Nx (N/mm)")
+plt.ylabel("Ns (N/mm)")
+plt.xlabel("Ny (N/mm)")
 plt.xlim(-2000, 2000)
 plt.ylim(-2000, 2000)
+
 plt.grid()
 plt.show()

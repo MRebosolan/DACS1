@@ -43,9 +43,9 @@ for n in range(len(angles)):
 
 laminate1 = laminate(laminaarray)
 
-Nxrange = np.arange(-2000, 2000, 50)
-Nyrange = np.arange(0, -2000, -50)
-Nyrange2 = np.arange(0, 2000, 50)
+Nxrange = np.arange(-2000, 2000, 25)
+Nyrange = np.arange(0, -2000, -25)
+Nyrange2 = np.arange(0, 2000, 25)
 
 envelopepoints = []
 envelopepoints2 = []
@@ -55,6 +55,7 @@ LPFcoordinates = {}
 LPFenvelope = []
 LPFcoordinates2 = {}
 LPFenvelope2 = []
+LPFstrains = []
 
 for Nx in Nxrange:
     for Ny2 in Nyrange2:
@@ -141,6 +142,7 @@ for Nx in Nxrange:
 
         if all(ply.failed is True for ply in laminaarray):
             LPFcoordinates.update({(Nx, Ny): True})
+            LPFstrains.append([Nx, Ny, *globalstrain[:3]])
             break
 
 for key in loadcombinations.keys():
@@ -227,6 +229,7 @@ for Nx in Nxrange:
 
         if all(ply.failed is True for ply in laminaarray):
             LPFcoordinates2.update({(Nx, Ny): True})
+            LPFstrains.append([Nx, Ny, *globalstrain[:3]])
             break
 
 for key in loadcombinations2.keys():
