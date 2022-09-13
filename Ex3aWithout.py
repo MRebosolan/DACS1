@@ -17,19 +17,19 @@ for i in range(n):
     angles.append(90)
     angles.append(0)
 
-
 E1 = 140.03E3
-E2 = 7.72E3
-v12 = 0.35
-G12 = 4.685E3
-S12 = 79
+E2 = 8.036E3
+v12 = 0.355
+G12 = 4.363E3
+S12 = 98.92
 S23 = 20
-Xt = 1950
+Xt = 1926.1
 Xc = 1480
-Yt = 107
+Yt = 107.06
 Yc = 220
 
-t = 0.125
+
+t = 2/len(angles)
 puck = False
 
 
@@ -117,10 +117,10 @@ for Nx in Nxrange:
                 dIFFC = ply.puckIFFC(sigma12, sigma22, Yc, S12)
                 dlist = [dFF, dIFFA, dIFFB, dIFFC]
             else:
-                d1 = ply.hashinFT(Xt, S12, sigma11, sigma12)
-                d2 = ply.hashinFC(Xc, sigma11)
-                d3 = ply.hashinMT(Yt, S12, sigma22, sigma12)
-                d4 = ply.hashinMC(Yc, S12, S23, sigma22, sigma12)
+                d1 = ply.hashinFT(sigma11, sigma12)
+                d2 = ply.hashinFC(sigma11)
+                d3 = ply.hashinMT(sigma22, sigma12)
+                d4 = ply.hashinMC(sigma22, sigma12)
                 dlist = [d1, d2, d3, d4]
 
             d = max(dlist)
@@ -203,10 +203,10 @@ for Nx in Nxrange:
                 dIFFC = ply.puckIFFC(sigma12, sigma22, Yc, S12)
                 dlist = [dFF, dIFFA, dIFFB, dIFFC]
             else:
-                d1 = ply.hashinFT(Xt, S12, sigma11, sigma12)
-                d2 = ply.hashinFC(Xc, sigma11)
-                d3 = ply.hashinMT(Yt, S12, sigma22, sigma12)
-                d4 = ply.hashinMC(Yc, S12, S23, sigma22, sigma12)
+                d1 = ply.hashinFT(sigma11, sigma12)
+                d2 = ply.hashinFC(sigma11)
+                d3 = ply.hashinMT(sigma22, sigma12)
+                d4 = ply.hashinMC(sigma22, sigma12)
                 dlist = [d1, d2, d3, d4]
 
             d = max(dlist)

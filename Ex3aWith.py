@@ -19,29 +19,30 @@ for i in range(n):
 
 
 E1 = 140.03E3
-E2 = 7.72E3
-v12 = 0.35
+E2 = 8.036E3
+v12 = 0.355
 v21 = v12 * (E2/E1)
-G12 = 4.685E3
-S12 = 79
+G12 = 4.363E3
+S12 = 98.92
 S23 = 20
-Xt = 1950
+Xt = 1926.1
 Xc = 1480
-Yt = 107
+Yt = 107.06
 Yc = 220
+
+t = 2/len(angles)
+puck = False
 
 beta = 1.04E-8
 G1c = 0.258
 G2c = 1.080
-
-
-t = 0.125
-puck = False
-
 phi = (48*G2c)/(pi*t)
 phi2 = (24*G2c)/(pi*t)
 delta = 2*((1/E2) - (v21**2 / E1))
-
+S12insitu = sqrt((sqrt(1 + beta*phi*G12**2)-1)/(3*beta*G12))
+S12insitu2 = sqrt((sqrt(1 + beta*phi2*G12**2)-1)/(3*beta*G12))
+Ytinsitu = sqrt((8*G1c)/(pi*t*delta))
+Ytinsitu2 = 1.79*sqrt(G1c/(pi*t*delta))
 
 
 zlocations = np.arange(-t * len(angles) / 2, t * (len(angles) + 1) / 2, t)
@@ -49,14 +50,18 @@ zlocations = np.arange(-t * len(angles) / 2, t * (len(angles) + 1) / 2, t)
 laminaarray = []
 
 for n in range(len(angles)):
-    ply = lamina(E1, E2, v12, G12, radians(angles[n]), zlocations[n], zlocations[n + 1], Xt, Xc, Yt, Yc, S12)
+    if n == 0 or n == len(angles):
+        ply = lamina(E1, E2, v12, G12, radians(angles[n]), zlocations[n], zlocations[n + 1], Xt, Xc, Ytinsitu2, Yc, S12insitu2)
+    else:
+        ply = lamina(E1, E2, v12, G12, radians(angles[n]), zlocations[n], zlocations[n + 1], Xt, Xc, Ytinsitu, Yc,
+                     S12insitu)
     laminaarray.append(ply)
 
 laminate1 = laminate(laminaarray)
 
-Nxrange = np.arange(-2000, 2000, 100)
-Nyrange = np.arange(0, -2000, -100)
-Nyrange2 = np.arange(0, 2000, 100)
+Nxrange = np.arange(-2000, 2000, 50)
+Nyrange = np.arange(0, -2000, -50)
+Nyrange2 = np.arange(0, 2000, 50)
 
 envelopepoints = []
 envelopepoints2 = []
@@ -85,13 +90,9 @@ for Nx in Nxrange:
         ply.FF = False
         ply.MF = False
         ply.dtype = 4
-    for ply in laminaarray[1:-1]:
-        ply.S12 = sqrt((sqrt(1 + beta*phi*G12**2)-1)/(3*beta*G12))
-        ply.Yt = sqrt((8*G1c)/(pi*t*delta))
-
-
     for Ny in Nyrange:
         for ply in laminaarray:
+            plyindex = laminaarray.index(ply)
             if ply.failed is True:
                 if ply.FF is True:
                     ply.E1 = 0.001
@@ -103,20 +104,37 @@ for Nx in Nxrange:
                     ply.S12 = 0.001
                     ply.G12 = 0.001
                 if ply.MF is True:
-                    ply.E2 = 0.85 * E2
-                    ply.Yt = 0.85 * Yt
-                    ply.Yc = 0.85 * Yc
-                    ply.S12 = 0.85 * S12
-                    ply.G12 = 0.85 * G12
+                    if plyindex == 0 or plyindex == len(angles):
+                        ply.E2 = 0.85 * E2
+                        ply.Yt = 0.85 * Ytinsitu2
+                        ply.Yc = 0.85 * Yc
+                        ply.S12 = 0.85 * S12insitu2
+                        ply.G12 = 0.85 * G12
+                    else:
+                        ply.E2 = 0.85 * E2
+                        ply.Yt = 0.85 * Ytinsitu
+                        ply.Yc = 0.85 * Yc
+                        ply.S12 = 0.85 * S12insitu
+                        ply.G12 = 0.85 * G12
             else:
-                ply.E1 = E1
-                ply.E2 = E2
-                ply.Xt = Xt
-                ply.Xc = Xc
-                ply.Yt = Yt
-                ply.Yc = Yc
-                ply.S12 = S12
-                ply.G12 = G12
+                if plyindex == 0 or plyindex == len(angles):
+                    ply.E1 = E1
+                    ply.E2 = E2
+                    ply.Xt = Xt
+                    ply.Xc = Xc
+                    ply.Yt = Ytinsitu2
+                    ply.Yc = Yc
+                    ply.S12 = S12insitu2
+                    ply.G12 = G12
+                else:
+                    ply.E1 = E1
+                    ply.E2 = E2
+                    ply.Xt = Xt
+                    ply.Xc = Xc
+                    ply.Yt = Ytinsitu
+                    ply.Yc = Yc
+                    ply.S12 = S12insitu
+                    ply.G12 = G12
 
         globalstrain = laminate1.globalstrains([Nx, Ny, 0, 0, 0, 0])
 
@@ -127,16 +145,16 @@ for Nx in Nxrange:
             sigma11, sigma22, sigma12 = plystressesL
 
             if puck is True:
-                dFF = ply.puckFF(Xt, Xc, E1, 200E3, v12, 0.1, sigma11, sigma22, sigma12)
-                dIFFA = ply.puckIFFA(sigma12, sigma22, S12, Yt)
-                dIFFB = ply.puckIFFB(sigma12, sigma22, S12, Yc)
-                dIFFC = ply.puckIFFC(sigma12, sigma22, Yc, S12)
+                dFF = ply.puckFF(ply.Xt, ply.Xc, ply.E1, 200E3, ply.v12, 0.1, sigma11, sigma22, sigma12)
+                dIFFA = ply.puckIFFA(sigma12, sigma22, ply.S12, ply.Yt)
+                dIFFB = ply.puckIFFB(sigma12, sigma22, ply.S12, ply.Yc)
+                dIFFC = ply.puckIFFC(sigma12, sigma22, ply.Yc, ply.S12)
                 dlist = [dFF, dIFFA, dIFFB, dIFFC]
             else:
-                d1 = ply.hashinFT(Xt, S12, sigma11, sigma12)
-                d2 = ply.hashinFC(Xc, sigma11)
-                d3 = ply.hashinMT(Yt, S12, sigma22, sigma12)
-                d4 = ply.hashinMC(Yc, S12, S23, sigma22, sigma12)
+                d1 = ply.hashinFT(sigma11, sigma12)
+                d2 = ply.hashinFC(sigma11)
+                d3 = ply.hashinMT(sigma22, sigma12)
+                d4 = ply.hashinMC(sigma22, sigma12)
                 dlist = [d1, d2, d3, d4]
 
             d = max(dlist)
@@ -153,7 +171,7 @@ for Nx in Nxrange:
                     loadcombinations.update({(Nx, Ny): True})
                 FPF = True
 
-            print(dlist, plystressesL, Nx, Ny, degrees(ply.theta), ply.failed, FPF)
+            #print(dlist, Nx, Ny, degrees(ply.theta), ply.failed, FPF)
 
         if all(ply.failed is True for ply in laminaarray):
             LPFcoordinates.update({(Nx, Ny): True})
@@ -176,13 +194,9 @@ for Nx in Nxrange:
         ply.FF = False
         ply.MF = False
         ply.dtype = 4
-
-    for ply in laminaarray[1:-1]:
-        ply.S12 = sqrt((sqrt(1 + beta*phi*G12**2)-1)/(3*beta*G12))
-        ply.Yt = sqrt((8*G1c)/(pi*t*delta))
-
     for Ny in Nyrange2:
         for ply in laminaarray:
+            plyindex = laminaarray.index(ply)
             if ply.failed is True:
                 if ply.FF is True:
                     ply.E1 = 0.001
@@ -194,20 +208,37 @@ for Nx in Nxrange:
                     ply.S12 = 0.001
                     ply.G12 = 0.001
                 if ply.MF is True:
-                    ply.E2 = 0.85 * E2
-                    ply.Yt = 0.85 * Yt
-                    ply.Yc = 0.85 * Yc
-                    ply.S12 = 0.85 * S12
-                    ply.G12 = 0.85 * G12
+                    if plyindex == 0 or plyindex == len(angles):
+                        ply.E2 = 0.85 * E2
+                        ply.Yt = 0.85 * Ytinsitu2
+                        ply.Yc = 0.85 * Yc
+                        ply.S12 = 0.85 * S12insitu2
+                        ply.G12 = 0.85 * G12
+                    else:
+                        ply.E2 = 0.85 * E2
+                        ply.Yt = 0.85 * Ytinsitu
+                        ply.Yc = 0.85 * Yc
+                        ply.S12 = 0.85 * S12insitu
+                        ply.G12 = 0.85 * G12
             else:
-                ply.E1 = E1
-                ply.E2 = E2
-                ply.Xt = Xt
-                ply.Xc = Xc
-                ply.Yt = Yt
-                ply.Yc = Yc
-                ply.S12 = S12
-                ply.G12 = G12
+                if plyindex == 0 or plyindex == len(angles):
+                    ply.E1 = E1
+                    ply.E2 = E2
+                    ply.Xt = Xt
+                    ply.Xc = Xc
+                    ply.Yt = Ytinsitu2
+                    ply.Yc = Yc
+                    ply.S12 = S12insitu2
+                    ply.G12 = G12
+                else:
+                    ply.E1 = E1
+                    ply.E2 = E2
+                    ply.Xt = Xt
+                    ply.Xc = Xc
+                    ply.Yt = Ytinsitu
+                    ply.Yc = Yc
+                    ply.S12 = S12insitu
+                    ply.G12 = G12
 
         globalstrain = laminate1.globalstrains([Nx, Ny, 0, 0, 0, 0])
 
@@ -224,10 +255,10 @@ for Nx in Nxrange:
                 dIFFC = ply.puckIFFC(sigma12, sigma22, Yc, S12)
                 dlist = [dFF, dIFFA, dIFFB, dIFFC]
             else:
-                d1 = ply.hashinFT(Xt, S12, sigma11, sigma12)
-                d2 = ply.hashinFC(Xc, sigma11)
-                d3 = ply.hashinMT(Yt, S12, sigma22, sigma12)
-                d4 = ply.hashinMC(Yc, S12, S23, sigma22, sigma12)
+                d1 = ply.hashinFT(sigma11, sigma12)
+                d2 = ply.hashinFC(sigma11)
+                d3 = ply.hashinMT(sigma22, sigma12)
+                d4 = ply.hashinMC(sigma22, sigma12)
                 dlist = [d1, d2, d3, d4]
 
             d = max(dlist)
@@ -244,7 +275,7 @@ for Nx in Nxrange:
                     loadcombinations2.update({(Nx, Ny): True})
                 FPF2 = True
 
-            # print(dlist, Nx, Ny, dtype, degrees(ply.theta), ply.failed, FPF2)
+            #print(dlist, Nx, Ny, dtype, degrees(ply.theta), ply.failed, FPF2)
 
         if all(ply.failed is True for ply in laminaarray):
             LPFcoordinates2.update({(Nx, Ny): True})
@@ -273,5 +304,3 @@ plt.xlim(-2000, 2000)
 plt.ylim(-2000, 2000)
 plt.grid()
 plt.show()
-
-

@@ -99,28 +99,35 @@ class lamina:
         return principalstresses
 
 
-    def hashinFT(self, Xt, S12, sigma1, tau12):
+    def hashinFT(self, sigma1, tau12):
+        Xt = self.Xt
+        S12 = self.S12
         if sigma1 >= 0:
             d = (sigma1/Xt)**2 + (tau12/S12)**2
         else:
             d = 0
         return d
 
-    def hashinFC(self, Xc, sigma1):
+    def hashinFC(self, sigma1):
+        Xc = self.Xc
         if sigma1 < 0:
             d = -sigma1/Xc
         else:
             d = 0
         return d
 
-    def hashinMT(self, Yt, S12, sigma2, tau12):
+    def hashinMT(self, sigma2, tau12):
+        Yt = self.Yt
+        S12 = self.S12
         if sigma2 > 0:
             d = (sigma2**2)/(Yt**2) + (tau12**2)/(S12**2)
         else:
             d = 0
         return d
 
-    def hashinMC(self, Yc, S12, S23, sigma2, tau12):
+    def hashinMC(self, sigma2, tau12, S23 = 20):
+        Yc = self.Yc
+        S12 = self.S12
         if sigma2 < 0:
             d = (sigma2/Yc)*((Yc/(2*S23))**2 - 1) + (sigma2/(2*S23))**2 + (tau12/S12)**2
         else:
