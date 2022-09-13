@@ -29,5 +29,7 @@ print(UTSlist*t)
 
 
 
-mu, std = norm.fit(UTSlist*t)
-print(mu)
+mu, std = norm.fit(UTSlist)
+print(mu, std)
+
+print(258.87/ 1713.17080456)
