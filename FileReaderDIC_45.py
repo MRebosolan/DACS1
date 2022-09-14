@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import os
 from scipy.stats import norm
 from SampleDimensions import l_45, w_45, t_45
+from reliability.Fitters import Fit_Weibull_2P
 
 
 DIC_45_Directory = r"C:\\Users\\nxf92804\\Desktop\\AE4ASM109 Data\\AssignmentCode\\ASM109_2021_data\\DIC\\45"
@@ -31,3 +32,14 @@ for n, df in enumerate(dfDIC45):
 
 mu, std = norm.fit(G12values)
 print(mu, std)
+
+
+data = G12values
+weibull_fit = Fit_Weibull_2P(failures=data, show_probability_plot=False, print_results=False)
+weibull_fit.distribution.PDF(label='Fitted Distribution - G12', color='steelblue')
+
+plt.xlabel("G12 (GPa)")
+plt.xlim((1, 6))
+plt.grid()
+plt.legend()
+plt.show()

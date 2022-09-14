@@ -5,8 +5,7 @@ import os
 from scipy.stats import norm, exponweib
 from SampleDimensions import l_UD, w_UD, t_UD
 from reliability.Fitters import Fit_Weibull_2P, Fit_Weibull_3P
-from reliability.Probability_plotting import plot_points
-from reliability.Distributions import Weibull_Distribution
+
 
 
 #APPROACH TO OBTAIN E1
@@ -72,9 +71,12 @@ x = np.linspace(min(E1values), max(E1values), 100000)
 
 
 data = Xtvalues
-weibull_fit = Fit_Weibull_3P(failures=data,show_probability_plot=False,print_results=False)
-weibull_fit.distribution.PDF(label='Fitted Distribution',color='steelblue')
-#plot_points(failures=data,func='PDF',label='failure data',color='red',alpha=0.7)
+weibull_fit = Fit_Weibull_2P(failures=data,show_probability_plot=False,print_results=False)
+weibull_fit.distribution.PDF(label='Fitted Distribution - Xt',color='steelblue')
+
+plt.xlabel("Xt (MPa)")
+plt.xlim((1250, 2250))
+plt.grid()
 plt.legend()
 plt.show()
 

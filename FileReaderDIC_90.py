@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import os
 from scipy.stats import norm
 from SampleDimensions import l_90, w_90, t_90
-
+from reliability.Fitters import Fit_Weibull_2P, Fit_Weibull_3P
 
 DIC_90_Directory = r"C:\\Users\\nxf92804\\Desktop\\AE4ASM109 Data\\AssignmentCode\\ASM109_2021_data\\DIC\\90"
 dfDIC90 = []
@@ -39,6 +39,17 @@ for n, df in enumerate(dfDIC90):
 mu, std = norm.fit(v21values)
 mu2, std2 = norm.fit(G12values)
 mu3, std3 = norm.fit(E2values)
-print(mu, std)
 
 
+
+data2 = v21values
+weibull_fit2 = Fit_Weibull_2P(failures=data2, show_probability_plot=False, print_results=False)
+weibull_fit2.distribution.PDF(label='Fitted Distribution - v21', color='steelblue')
+plt.xlabel("v21 (-)")
+plt.xlim((0, 0.05))
+
+print(v21values)
+
+plt.grid()
+plt.legend()
+plt.show()

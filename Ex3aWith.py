@@ -2,7 +2,6 @@ import numpy as np
 from math import *
 import matplotlib.pyplot as plt
 import pandas as pd
-
 from Functions import *
 
 angles = []
@@ -140,7 +139,7 @@ for Nx in Nxrange:
                     ply.S12 = S12insitu
                     ply.G12 = G12
 
-        globalstrain = laminate1.globalstrains([0, Nx, Ny, 0, 0, 0])
+        globalstrain = laminate1.globalstrains([Nx, Ny, 0, 0, 0, 0])
 
         for ply in laminaarray:
             plystrainsG = ply.plystrains(globalstrain, 1)
@@ -245,7 +244,7 @@ for Nx in Nxrange:
                     ply.S12 = S12insitu
                     ply.G12 = G12
 
-        globalstrain = laminate1.globalstrains([0, Nx, Ny, 0, 0, 0])
+        globalstrain = laminate1.globalstrains([Nx, Ny, 0, 0, 0, 0])
 
         for ply in laminaarray:
             plystrainsG = ply.plystrains(globalstrain, 1)
@@ -309,7 +308,7 @@ df["Exx"] = LPFstrains[:, 2]
 df["Eyy"] = LPFstrains[:, 3]
 df["Exy"] = LPFstrains[:, 4]
 
-filename = "Globalstrains.xlsx"
+filename = "GlobalstrainsNxNywith.xlsx"
 df.to_excel(filename)
 
 

@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import os
 from scipy.stats import norm
 from SampleDimensions import l_90, w_90, t_90
+from reliability.Fitters import Fit_Weibull_2P
 
 
 MTS_90_Directory = r"C:\\Users\\nxf92804\\Desktop\\AE4ASM109 Data\\AssignmentCode\\ASM109_2021_data\\MTS\\90"
@@ -30,7 +31,6 @@ for n, df in enumerate(dfMTS90):
     sigmayy = np.array(df["sigmayy"])
     Ytvalues.append(max(sigmayy))
     E2 = sigmayy[1000:5000]/eyy[1000:5000]
-    plt.plot(eyy, sigmayy)
     for value in E2:
         E2values.append(value)
 
@@ -38,6 +38,14 @@ mu, std = norm.fit(E2values)
 mu2, std2 = norm.fit(Ytvalues)
 print(mu2, std2)
 
+data = Ytvalues
+weibull_fit = Fit_Weibull_2P(failures=data,show_probability_plot=False,print_results=False)
+weibull_fit.distribution.PDF(label='Fitted Distribution - Yt',color='steelblue')
+
+plt.xlabel("Yt (MPa)")
+plt.xlim((60, 140))
+plt.grid()
+plt.legend()
 plt.show()
 
 

@@ -2,6 +2,7 @@ import numpy as np
 from math import *
 import matplotlib.pyplot as plt
 from Functions import *
+import pandas as pd
 
 angles = []
 
@@ -244,6 +245,18 @@ envelopepoints = np.array(envelopepoints)
 envelopepoints2 = np.array(envelopepoints2)
 LPFenvelope = np.array(LPFenvelope)
 LPFenvelope2 = np.array(LPFenvelope2)
+LPFstrains = np.array(LPFstrains)
+
+
+df = pd.DataFrame()
+df["Nx"] = LPFstrains[:, 0]
+df["Ny"] = LPFstrains[:, 1]
+df["Exx"] = LPFstrains[:, 2]
+df["Eyy"] = LPFstrains[:, 3]
+df["Exy"] = LPFstrains[:, 4]
+
+filename = "GlobalstrainsNxNywithout.xlsx"
+df.to_excel(filename)
 
 plt.plot(envelopepoints[:, 0], envelopepoints[:, 1], "b")
 plt.plot(LPFenvelope[:, 0], LPFenvelope[:, 1], "r")

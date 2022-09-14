@@ -16,8 +16,6 @@ v12values = []
 G12values = []
 a = w * t
 
-print(a)
-
 
 
 
@@ -46,17 +44,23 @@ for n, df in enumerate(dfDICUD):
         for value3 in G12:
             G12values.append(G12)
 
+print(v12values)
 
 mu, std = norm.fit(v12values)
 mu2, std2 = norm.fit(E1values)
 mu3, std3 = norm.fit(G12values)
 
-data = E1values
-weibull_fit = Fit_Weibull_3P(failures=data,show_probability_plot=False,print_results=False)
-weibull_fit.gamma = 120
-weibull_fit.distribution.PDF(label='Fitted Distribution',color='steelblue')
-#plot_points(failures=data,func='PDF',label='failure data',color='red',alpha=0.7)
+# data = E1values
+# weibull_fit = Fit_Weibull_2P(failures=data, show_probability_plot=False, print_results=False)
+# weibull_fit.distribution.PDF(label='Fitted Distribution - E1', color='steelblue')
 
+data2 = np.abs(v12values)
+weibull_fit2 = Fit_Weibull_2P(failures=data2, show_probability_plot=False, print_results=False)
+weibull_fit2.distribution.PDF(label='Fitted Distribution - v12', color='steelblue')
+
+#plt.xlim((60, 200))
+plt.xlabel("v12 (-)")
+plt.grid()
 plt.legend()
 plt.show()
 
