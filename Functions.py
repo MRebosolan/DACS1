@@ -166,7 +166,7 @@ class lamina:
         sigma12c = S12 * sqrt(1 + 2 * p23)
 
         if 0 <= abs(sigma12/sigma22) <= abs(sigma12c)/sigma23a and sigma22 < 0:
-            d = ((sigma12/(2*(1+p23*S12)))**2 + (sigma22/Yc)**2)*(-Yc/sigma22)
+            d = (((sigma12/(2*(1+p23)*S12)))**2 + (sigma22/Yc)**2)*(-Yc/sigma22)
         else:
             d = 0
         return d

@@ -113,7 +113,7 @@ for Nx in Nxrange:
             sigma11, sigma22, sigma12 = plystressesL
 
             if puck is True:
-                dFF = ply.puckFF(Xt, Xc, E1, 200E3, v12, 0.1, sigma11, sigma22, sigma12)
+                dFF = ply.puckFF(Xt, Xc, E1, 225E3, v12, 0.2, sigma11, sigma22, sigma12)
                 dIFFA = ply.puckIFFA(sigma12, sigma22, S12, Yt)
                 dIFFB = ply.puckIFFB(sigma12, sigma22, S12, Yc)
                 dIFFC = ply.puckIFFC(sigma12, sigma22, Yc, S12)
@@ -131,7 +131,7 @@ for Nx in Nxrange:
 
             if d >= 1 and ply.failed is False:
                 ply.failed = True
-                if dlist[0] or dlist[1] >= 1:
+                if dlist[0] >= 1:
                     ply.FF = True
                 else:
                     ply.MF = True
@@ -200,7 +200,7 @@ for Nx in Nxrange:
             sigma11, sigma22, sigma12 = plystressesL
 
             if puck is True:
-                dFF = ply.puckFF(Xt, Xc, E1, 200E3, v12, 0.1, sigma11, sigma22, sigma12)
+                dFF = ply.puckFF(Xt, Xc, E1, 225E3, v12, 0.2, sigma11, sigma22, sigma12)
                 dIFFA = ply.puckIFFA(sigma12, sigma22, S12, Yt)
                 dIFFB = ply.puckIFFB(sigma12, sigma22, S12, Yc)
                 dIFFC = ply.puckIFFC(sigma12, sigma22, Yc, S12)
@@ -218,7 +218,7 @@ for Nx in Nxrange:
 
             if d >= 1 and ply.failed is False:
                 ply.failed = True
-                if dlist[0] or dlist[1] >= 1:
+                if dlist[0] >= 1:
                     ply.FF = True
                 else:
                     ply.MF = True
